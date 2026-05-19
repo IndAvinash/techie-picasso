@@ -1,0 +1,12 @@
+{
+  "name": "techie-picasso",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces --if-present",
+    "dev:backend": "npm run dev --workspace=@canvas/server1 --workspace=@canvas/server2"
+  }
+}

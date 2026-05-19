@@ -1,0 +1,259 @@
+
+.formPg{
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  
+}
+input::placeholder{
+  font-family: "", sans-serif;
+}
+
+
+.login-form{
+  border:2px solid ;
+  padding:10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  min-width: fit-content;
+  width:40vw;
+  max-width: 350px;
+  margin: auto;
+  gap:3px;
+}
+
+.login-form input{
+  background-color: var(--bg);
+  border:1px solid red;
+  color:var(--text);
+  font-family: "mainFont", sans-serif;
+  border:2px solid ;
+  padding:10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  min-width: fit-content;
+  width:40vw;
+  max-width: 350px;
+  margin: auto;
+}
+.login-form input::placeholder{
+  font:15px "mainFont", sans-serif; 
+  background-color: var(--bg);
+  color:var(--text-color)
+
+}
+.login-form input[type=submit]{
+  font-family: "mainFont", sans-serif;
+  margin-top: 20px;
+  background-color: aliceblue;
+  color:var(--text);
+  transition: ease-in-out 0.3s;
+}
+.login-form input[type=submit]:hover{
+  background-color: black;
+  color: white;
+}
+.anchor{
+  border-radius: 2px;
+  padding:2px;
+  text-decoration: underline;
+}
+.anchor:hover{
+  color:aliceblue;
+  background: #000;
+}
+
+
+
+
+
+
+/*Headers*/
+.app-header{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: transparent; /* Transparent to let canvas sit underneath */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  z-index: 100;
+  pointer-events: none;
+}
+ .header-left, .header-center, .header-right {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.logo {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+ .toolbar {
+  background-color: var(--surface-color);
+  padding: 6px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+  display: flex;
+  gap: 4px;
+}
+.tool-btn {
+  background: transparent;
+  border: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  color: #495057;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.tool-btn:hover {
+  background-color: #f1f3f5;
+  color: var(--text-color);
+}
+
+.tool-btn.active {
+  background-color: #e7f5ff;
+  color: #1c7ed6; /* Active tool blue */
+}
+.tool-btn::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.8);
+  background-color: #343a40;
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.15s ease;
+}
+.tool-btn:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+.header-right{
+  background-color: var(--surface-color);
+  padding: 6px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+  display: flex;
+  gap: 8px;
+}
+.btn-primary {
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  /* transition: background 0.2s; */
+}
+.btn-primary:hover {
+  background-color: var(--accent-hover);
+}
+.icon-btn {
+  background: transparent;
+  border: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  color: #495057;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn:hover {
+  background-color: #f1f3f5;
+}
+
+
+
+/* Room Manager */
+
+
+.roomManager{
+  width: 100vw;
+  height: 100vh;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+.roomCard{
+  border: solid var(--text);
+  display: flex;
+  flex-direction:column;
+  min-width:fit-content;
+  width:40vw;
+  padding:6px;
+  border-radius: 10px;
+}
+.h-divider{
+  width:100%;
+  height: 1px;
+  margin:4px 0 0 2px;
+  background-color: var(--border);
+}
+.roomCard ul{
+list-style: none;
+  padding-left: 0;
+  margin-left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.roomCard li{
+  border: solid var(--border);
+  display: flex;
+  flex-direction:row;
+  justify-content: space-between;
+  gap: 4px;
+  padding:6px;
+  border-radius: 10px;
+}
+
+.divider {
+  width: 1px;
+  background-color: var(--border-color);
+  /* margin: ; */
+}
+.back-btn{
+  position: absolute;
+  top:5px;
+  left:5px;
+  width:fit-content;
+}
