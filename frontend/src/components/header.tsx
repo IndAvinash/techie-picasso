@@ -20,26 +20,7 @@ export default function Header(){
     return (
         
         <>
-        <header className="app-header">
-        <div className="header-left">
-            <div className="logo">
-                <span>Techie Picasso</span>
-            </div>
-        </div>
-        <nav className="header-center">
-            <div className="toolbar">
-                <button className="tool-btn" data-tooltip="span" >A</button>
-                <button className="tool-btn" data-tooltip="draw">B</button>
-                <button className="tool-btn" data-tooltip="erase">C</button>
-            </div>
-        </nav>
-        <div className="header-right">
-            <button className="btn-primary" onClick={()=>toggleMode()}>
-                Create Room
-            </button>
-            <button className="icon-btn">D</button>
-        </div>
-        </header>
+        
         </>
     )
 }

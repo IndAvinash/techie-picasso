@@ -6,11 +6,13 @@
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
   --accent: #970eff;
+  --accent-t: rgb(151, 14, 255,0.4);
   --accent-bg: rgba(25, 21, 28, 0.1);
   --accent-border: rgba(170, 59, 255, 0.5);
   --accent-hover:#7700d2;
   --social-bg: rgba(244, 243, 236, 0.5);
   --surface-color: #f0f8ff;
+  --surface-color-t: rgba(240, 248, 255,0.45);
   --text-color:var(--text-h);
   --border-color:var(--border);
   --shadow:

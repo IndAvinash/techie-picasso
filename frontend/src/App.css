@@ -84,13 +84,17 @@ input::placeholder{
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: rgba(253, 253, 253, 0.45);
+    backdrop-filter: blur(1px);
+
   padding: 0 16px;
-  z-index: 100;
+  z-index: 1000;
   pointer-events: none;
 }
  .header-left, .header-center, .header-right {
   pointer-events: auto;
   display: flex;
+  background-color: transparent;
   align-items: center;
   gap: 12px;
 }
@@ -98,12 +102,15 @@ input::placeholder{
   font-weight: 700;
   font-size: 1.1rem;
   color: var(--text-color);
+  background-color: transparent;
+  background: rgba(253, 253, 253, 0);
   display: flex;
   align-items: center;
   gap: 6px;
 }
  .toolbar {
-  background-color: var(--surface-color);
+  background-color: transparent;
+  background: var(--surface-color-t);
   padding: 6px;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -112,7 +119,8 @@ input::placeholder{
   gap: 4px;
 }
 .tool-btn {
-  background: transparent;
+  background-color: transparent;
+  background: var(--surface-color-t);
   border: none;
   width: 38px;
   height: 38px;
@@ -128,7 +136,8 @@ input::placeholder{
 }
 
 .tool-btn:hover {
-  background-color: #f1f3f5;
+ background-color: transparent;
+  background: rgba(255, 86, 86, 0.45);
   color: var(--text-color);
 }
 
@@ -157,7 +166,8 @@ input::placeholder{
   transform: translateX(-50%) scale(1);
 }
 .header-right{
-  background-color: var(--surface-color);
+  background-color: transparent;
+  background: var(--surface-color-t);
   padding: 6px;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -166,7 +176,7 @@ input::placeholder{
   gap: 8px;
 }
 .btn-primary {
-  background-color: var(--accent);
+  background: var(--accent);
   color: white;
   border: none;
   padding: 8px 14px;
@@ -197,7 +207,7 @@ input::placeholder{
 }
 
 .icon-btn:hover {
-  background-color: #f1f3f5;
+  background-color: rgba(253, 253, 253, 0.8);
 }
 
 
@@ -256,4 +266,7 @@ list-style: none;
   top:5px;
   left:5px;
   width:fit-content;
+}
+.drawing-canvas{
+  border: solid 2px black;
 }
