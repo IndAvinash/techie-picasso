@@ -137,13 +137,13 @@ input::placeholder{
 
 .tool-btn:hover {
  background-color: transparent;
-  background: rgba(255, 86, 86, 0.45);
-  color: var(--text-color);
+   background-color: #e7f5ff;
+  color: #1c7ed6; 
 }
 
 .tool-btn.active {
   background-color: #e7f5ff;
-  color: #1c7ed6; /* Active tool blue */
+  color: #1c7ed6; 
 }
 .tool-btn::after {
   content: attr(data-tooltip);
