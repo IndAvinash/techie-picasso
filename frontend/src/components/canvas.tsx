@@ -1,6 +1,5 @@
 import {useRef, useEffect,useState} from 'react'
-import Header from './header';
-import { Stage, Layer, Rect, Circle, Text, Line } from 'react-konva';
+import { Stage, Layer, Line } from 'react-konva';
 
 
 type LineType = { points: number[]; color: string; strokeWidth: number }
