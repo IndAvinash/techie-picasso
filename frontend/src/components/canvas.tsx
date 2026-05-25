@@ -1,25 +1,24 @@
 import {useRef, useEffect,useState} from 'react'
 import { Stage, Layer, Line } from 'react-konva';
 import { Download, Hand, Pen, Eraser, UserX, Users, Plus } from "lucide-react";
-// import type { StageConfig } from 'konva/lib/Stage';
-import { useCanvasInteractions } from '../hooks/useCanvasInteractions';
 
+import { useCanvasInteractions } from '../hooks/useCanvasInteractions';
+import { useYJsRoom } from '../hooks/useYJsRoom';
 type LineType = { points: number[]; color: string; strokeWidth: number; tool: 'pen' | 'eraser' | 'pin' | 'hand' }
 
 export default function Canvas(){
     const [tool, setTool] = useState<'pen' | 'eraser' | 'pin' | 'hand'>('pen');
-    const [lines, setLines] = useState<LineType[]>([]);
     const [color, setColor] = useState('#000000');
 
     const stageRef = useRef<any>(null)
    
 
-  
+  const { lines, docRef, YLinesRef } = useYJsRoom('default-room');
 
   const {
     stageScale, stagePos,
     handleWheel, handleMouseDown, handleMouseMove, handleMouseUp
-  } = useCanvasInteractions(tool, color,setLines,lines);
+  } = useCanvasInteractions(tool, color, docRef, YLinesRef);
 
 const downloadCanvas = () => {
     if (stageRef.current) {
