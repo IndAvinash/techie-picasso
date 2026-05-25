@@ -18,3 +18,11 @@ model User {
 }
 
 
+
+model Room {
+  id          String   @id @default(uuid())
+  name        String
+  ownerId     String?
+  canvasState Bytes?
+  createdAt   DateTime @default(now())
+}
