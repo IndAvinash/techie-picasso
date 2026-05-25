@@ -5,40 +5,57 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 const API_URL = 'http://localhost:3000';  
 export type LineType = { points: number[]; color: string; strokeWidth: number; tool: 'pen' | 'eraser' | 'pin' | 'hand' }
+
+export const getCurrentUser = () => {
+  const userStr = localStorage.getItem('user');
+  return userStr ? JSON.parse(userStr) : null;
+};
 export function useYJsRoom(roomId: string| undefined) {
   const navigate = useNavigate();
-  const [doc, setdoc] = useState<Y.Doc | null>(null);
-   const [lines, setLines] = useState<LineType[]>([]);
+
+    const [lines, setLines] = useState<LineType[]>([]);
+    const [roomOwnerId, setRoomOwnerId] = useState<string | null>(null);
+    const [participants, setParticipants] = useState<any[]>([]);
+    const [provider, setProvider] = useState<WebsocketProvider | null>(null);
+    const providerRef = useRef<WebsocketProvider | null>(null);
+    const docRef = useRef<Y.Doc | null>(null);
+    const YLinesRef = useRef<Y.Array<LineType> | null>(null);
+    
+    
+    useEffect(() => {
+
+    setLines([]);
     let isMounted = true;
-     const fetchRoom = async () => {
+    const fetchRoom = async () => {
       if (!roomId) return;
       try {
         const res = await axios.get(`${API_URL}/rooms/${roomId}`);
         if (isMounted) setRoomOwnerId(res.data.ownerId);
       } catch (err) {
         console.error("Failed to fetch room details", err);
+        navigate('/');
       }
     };
     fetchRoom();
-  const [roomOwnerId, setRoomOwnerId] = useState<string | null>(null);
-  const [participants, setParticipants] = useState<any[]>([]);
-  const [provider, setProvider] = useState<WebsocketProvider | null>(null);
-    const providerRef = useRef<WebsocketProvider | null>(null);
-    const docRef = useRef<Y.Doc | null>(null);
-    const YLinesRef = useRef<Y.Array<LineType> | null>(null);
-  useEffect(() => {
-    setLines([]);
+
     const doc = new Y.Doc();
-    const provider = new WebsocketProvider('ws://localhost:3000', roomId?roomId:'', doc);
-    providerRef.current = provider;
-    setdoc(doc);
-    setProvider(provider);
     const yLines = doc.getArray<LineType>('lines');
     YLinesRef.current = yLines;
     docRef.current = doc;
     yLines.observe(() => {
       if (isMounted) setLines(yLines.toArray());
     });
+    if(roomId){
+        const provider = new WebsocketProvider('ws://localhost:3000', roomId?roomId:'', doc);
+        providerRef.current = provider;
+        setProvider(provider);
+         provider.on('status', (event: any) => {
+        if (event.status === 'disconnected') {
+          console.warn('WebSocket disconnected. Ensure Nginx and the Node servers are running.');
+        } else {
+          console.log('WebSocket connected successfully.');
+        }
+      });
       const syncParticipants = () => {
         if (!provider) return;
         const states = Array.from(provider.awareness.getStates().entries());
@@ -77,13 +94,39 @@ export function useYJsRoom(roomId: string| undefined) {
       };
 
       provider.awareness.on('change', syncParticipants);
-      
+    const user = getCurrentUser();
+      if (user) {
+        user.joinedAt = Date.now();
+        provider.awareness.setLocalStateField('user', user);
+      } else {
+        axios.post(`${API_URL}/auth/anonymous`).then(anonRes => {
+          localStorage.setItem('token', anonRes.data.token);
+          localStorage.setItem('user', JSON.stringify(anonRes.data.user));
+          window.dispatchEvent(new Event('storage'));
+          if (provider) {
+            const newUser = { ...anonRes.data.user, joinedAt: Date.now() };
+            provider.awareness.setLocalStateField('user', newUser);
+          }
+        }).catch(err => console.error("Failed to create anon user", err));
+        syncParticipants();
+      }    
+    }else {
+        if (isMounted) setParticipants([]);
+    }
     return () => {
-        // isMounted = false;
-      provider.disconnect();
+        isMounted = false;
+      provider?.disconnect();
       doc.destroy();
     };
   }, [roomId,navigate]);
+const closeRoom = () => {
+    
+    axios.post(`${API_URL}/rooms/${roomId}/close`, {}, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    }).then(() => {
+      navigate('/');
+    });
+  };
 
-  return { lines, participants, roomOwnerId, docRef, YLinesRef };
+  return { lines, participants, roomOwnerId, docRef, YLinesRef, closeRoom };
 }

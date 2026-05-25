@@ -49,3 +49,33 @@ router.get('/:id', async (req: any, res: any) => {
 });
 
 export const roomsRouter = router;
+
+router.post('/:id/close', async (req: any, res: any) => {
+  try {
+    const roomId = req.params.id;  
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'No token provided' });
+    } else {
+      const token = authHeader.split(' ')[1];
+        try {
+            const decoded: any = jwt.verify(token, JWT_SECRET);
+            const room = await prisma.room.findUnique({ where: { id: roomId } });
+            if (!room) return res.status(404).json({ error: 'Room not found' });
+            if (room.ownerId !== decoded.id) {
+              return res.status(403).json({ error: 'You are not the owner of this room' });
+            }
+
+            await prisma.room.delete({ where: { id: roomId } });
+
+            res.json({ message: 'Room closed successfully' });
+          } catch (e) {
+            console.error("Invalid token on room close");
+            return res.status(401).json({ error: 'Invalid token' });
+          }
+        }
+      }
+    catch(err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
+    }});

@@ -3,9 +3,10 @@ import { useParams } from 'react-router-dom';
 import { Stage, Layer, Line } from 'react-konva';
 import { Download, Hand, Pen, Eraser,Users, Pin } from "lucide-react";
 import { useCanvasInteractions } from '../hooks/useCanvasInteractions';
-import { useYJsRoom } from '../hooks/useYJsRoom';
+import { getCurrentUser, useYJsRoom } from '../hooks/useYJsRoom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { RoomMenu } from './RoomMenu';
 
 type LineType = { points: number[]; color: string; strokeWidth: number; tool: 'pen' | 'eraser' | 'pin' | 'hand' }
 
@@ -20,12 +21,13 @@ export default function Canvas(){
     const stageRef = useRef<any>(null)
    
 
-  const { lines, participants, roomOwnerId, docRef, YLinesRef } = useYJsRoom(roomId);
+  const { lines, participants, roomOwnerId, docRef, YLinesRef , closeRoom} = useYJsRoom(roomId);
 
   const {
     stageScale, stagePos,
     handleWheel, handleMouseDown, handleMouseMove, handleMouseUp
   } = useCanvasInteractions(tool, color, docRef, YLinesRef);
+const currentUser = getCurrentUser();
 
   const createRoom = async () => {
     try {
@@ -90,6 +92,17 @@ return(
           }}>
                 Create Room
             </button>)}
+            {showMenu && (
+            <RoomMenu 
+              participants={participants} 
+              roomOwnerId={roomOwnerId} 
+              currentUser={currentUser}
+              createRoom={createRoom} 
+              closeRoom={closeRoom}
+              navigate={navigate}
+              setShowMenu={()=>setShowMenu(false)}
+            />
+          )}
             <button className="icon-btn" onClick={()=>downloadCanvas()}><Download/></button>
         </div>
         </header>
