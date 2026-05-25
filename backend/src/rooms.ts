@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'secret123';
 
 router.post('/create', async (req: any, res: any) => {
+    console.log("Create room request received");
   try {
     const { name } = req.body;
     let ownerId = null;

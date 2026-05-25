@@ -1,24 +1,54 @@
 import {useRef, useEffect,useState} from 'react'
+import { useParams } from 'react-router-dom';
 import { Stage, Layer, Line } from 'react-konva';
-import { Download, Hand, Pen, Eraser, UserX, Users, Plus } from "lucide-react";
-
+import { Download, Hand, Pen, Eraser,Users, Pin } from "lucide-react";
 import { useCanvasInteractions } from '../hooks/useCanvasInteractions';
 import { useYJsRoom } from '../hooks/useYJsRoom';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 type LineType = { points: number[]; color: string; strokeWidth: number; tool: 'pen' | 'eraser' | 'pin' | 'hand' }
 
+const API_URL = 'http://localhost:3000';
 export default function Canvas(){
+        const navigate = useNavigate();
+      const { roomId } = useParams();
     const [tool, setTool] = useState<'pen' | 'eraser' | 'pin' | 'hand'>('pen');
     const [color, setColor] = useState('#000000');
+    const [showMenu, setShowMenu] = useState(false);
 
     const stageRef = useRef<any>(null)
    
 
-  const { lines, docRef, YLinesRef } = useYJsRoom('default-room');
+  const { lines, participants, roomOwnerId, docRef, YLinesRef } = useYJsRoom(roomId);
 
   const {
     stageScale, stagePos,
     handleWheel, handleMouseDown, handleMouseMove, handleMouseUp
   } = useCanvasInteractions(tool, color, docRef, YLinesRef);
+
+  const createRoom = async () => {
+    try {
+      let token = localStorage.getItem('token');
+      
+      if (!token) {
+        const anonRes = await axios.post(`${API_URL}/auth/anonymous`);
+        token = anonRes.data.token;
+        localStorage.setItem('token', token??'');
+        localStorage.setItem('user', JSON.stringify(anonRes.data.user));
+        window.dispatchEvent(new Event('storage'));
+      }
+
+      const res = await axios.post(`${API_URL}/rooms/create`, { name: 'New Room' }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setShowMenu(false);
+      navigate(`/room/${res.data.id}`);
+    } catch (err: any) {
+      console.error(err);
+      alert('Failed to create room. Please ensure the server is running.');
+    }
+  };
 
 const downloadCanvas = () => {
     if (stageRef.current) {
@@ -31,10 +61,7 @@ const downloadCanvas = () => {
       document.body.removeChild(link);
     }
   };
-useEffect(
-    ()=>{
-        },[]
-)
+
 
 
 return(
@@ -50,12 +77,19 @@ return(
                 <button className={`tool-btn ${tool === 'hand' ? 'active' : ''}`} data-tooltip="span" onClick={()=>{setTool('hand')}} ><Hand/></button>
                 <button className={`tool-btn ${tool === 'pen' ? 'active' : ''}`} data-tooltip="draw" onClick={()=>{setTool('pen')}}><Pen/></button>
                 <button className={`tool-btn ${tool === 'eraser' ? 'active' : ''}`} data-tooltip="erase" onClick={()=>{setTool('eraser')}}><Eraser/></button>
+                <button className={`tool-btn ${tool === 'pin' ? 'active' : ''}`} data-tooltip="pin" onClick={()=>{setTool('pin')}}><Pin/></button>
             </div>
         </nav>
         <div className="header-right">
-            <button className="btn-primary" onClick={()=>{}}>
-                Create Room
+            
+            {roomId ? (
+            <button className="btn-primary" onClick={() => setShowMenu(!showMenu)} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Users size={18} /> Room Menu ({participants.length}/4)
             </button>
+          ) :(<button className="btn-primary" onClick={()=>{createRoom()
+          }}>
+                Create Room
+            </button>)}
             <button className="icon-btn" onClick={()=>downloadCanvas()}><Download/></button>
         </div>
         </header>

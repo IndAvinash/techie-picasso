@@ -113,4 +113,19 @@ router.post('/anonymous', async (req: any, res: any) => {
   }
 });
 
+router.post('/auth', (req: any, res: any) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'No token provided' });
+  }else{
+    const token = authHeader.split(' ')[1];
+    try {
+      const decoded: any = jwt.verify(token, JWT_SECRET);
+      res.json({ user: { id: decoded.id, email: decoded.email } });
+    } catch (e) {
+      console.error("Invalid token on auth check");
+      res.status(401).json({ error: 'Invalid token' });
+    }
+  }
+});
 export const authRouter = router;

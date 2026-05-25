@@ -8,13 +8,14 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { setupWSConnection } = require('y-websocket/bin/utils')
 import cors from 'cors';
+import { roomsRouter } from './rooms.ts';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 app.use('/auth', authRouter);
-
+app.use('/rooms', roomsRouter);
 const server = http.createServer(app)
 const wss = new WebSocketServer({ server })
 wss.on('connection', (conn, req) => {
