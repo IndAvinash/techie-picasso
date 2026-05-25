@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef } from "react";
-// import { Header } from "../components/header";
-import { Link } from "react-router-dom";
-import { login } from "../services/api";
+import { useState } from "react";
+import axios from 'axios';
+const API_URL = 'http://localhost:3000';
 import { useNavigate } from "react-router-dom";
 
 
@@ -26,7 +25,19 @@ export default function SignUp() {
         <label>Confirm Password</label>
         <input type="text" placeholder="mypassword" value={cnfmpassword} className="input-password" onChange={(e)=>{setCnfmPassword(e.target.value)}}  required/>
         
-        <input type="submit" value="SignUp" onClick={(e)=>{}} />
+        <input type="submit" value="SignUp" onClick={async (e)=>{
+            e.preventDefault();
+            if (password !== cnfmpassword) {
+                return alert("Passwords don't match");
+            }
+            try {
+                const res = await axios.post(`${API_URL}/auth/signup`, { email, password });
+                alert(res.data.message);
+                navigate('/login');
+            } catch (err: any) {
+                alert(err.response?.data?.error || 'Signup failed');
+            }
+        }} />
         <br />
         <p>Already have Account <span onClick={()=>navigate("/Login")} className="anchor">Login</span></p>
         </form> 

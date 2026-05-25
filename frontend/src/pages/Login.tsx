@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-// import { Header } from "../components/header";
-import { Link } from "react-router-dom";
-import { login } from "../services/api";
+import axios from 'axios';
+const API_URL = 'http://localhost:3000';
 import { useNavigate } from "react-router-dom";
 
 
@@ -22,7 +21,17 @@ export default function Login() {
         <label>Password</label>
         <input type="password" placeholder="••••••••" value={password} className="input-password" onChange={(e)=>{setPassword(e.target.value)}}  required/>
         
-        <input type="submit" value="Login" onClick={(e)=>{ }} />
+        <input type="submit" value="Login" onClick={async (e)=>{
+            e.preventDefault();
+            try {
+                const res = await axios.post(`${API_URL}/auth/login`, { email, password });
+                localStorage.setItem('token', res.data.token);
+                localStorage.setItem('user', JSON.stringify(res.data.user));
+                navigate('/');
+            } catch (err: any) {
+                alert(err.response?.data?.error || 'Login failed');
+            }
+        }} />
         <br />
         <p>Don't have Account <span onClick={()=>navigate("/SignUp")} className="anchor">SignUp</span></p>
         </form> 
