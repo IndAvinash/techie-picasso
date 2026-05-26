@@ -7,7 +7,8 @@ import { getCurrentUser, useYJsRoom } from '../hooks/useYJsRoom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { RoomMenu } from './RoomMenu';
-
+import { URLImage,PinCreatorModal } from './Pins';
+import { RoomClosedModal } from './RoomClosed';
 type LineType = { points: number[]; color: string; strokeWidth: number; tool: 'pen' | 'eraser' | 'pin' | 'hand' }
 
 const API_URL = 'http://localhost:3000';
@@ -17,16 +18,21 @@ export default function Canvas(){
     const [tool, setTool] = useState<'pen' | 'eraser' | 'pin' | 'hand'>('pen');
     const [color, setColor] = useState('#000000');
     const [showMenu, setShowMenu] = useState(false);
+     const [showPinCreator, setShowPinCreator] = useState(false);
+  const [customPins, setCustomPins] = useState<string[]>([]);
+  const [selectedPinSrc, setSelectedPinSrc] = useState<string | undefined>(undefined);
+  const [selectedPlacedPin, setSelectedPlacedPin] = useState<string | null>(null);
 
     const stageRef = useRef<any>(null)
    
 
-  const { lines, participants, roomOwnerId, docRef, YLinesRef , kickUser,closeRoom} = useYJsRoom(roomId);
+  const { lines, pins, participants, roomOwnerId, ownerLeft, setOwnerLeft,docRef, yLinesRef, yPinsRef, kickUser, closeRoom} = useYJsRoom(roomId);
 
   const {
     stageScale, stagePos,
     handleWheel, handleMouseDown, handleMouseMove, handleMouseUp
-  } = useCanvasInteractions(tool, color, docRef, YLinesRef);
+  } = useCanvasInteractions(tool, color, docRef, yLinesRef, yPinsRef, selectedPinSrc);
+
 const currentUser = getCurrentUser();
 
   const createRoom = async () => {
@@ -108,6 +114,31 @@ return(
             <button className="icon-btn" onClick={()=>downloadCanvas()}><Download/></button>
         </div>
         </header>
+          {ownerLeft && (
+        <RoomClosedModal 
+          downloadCanvas={downloadCanvas} 
+          onExit={() => { setOwnerLeft(false); navigate('/'); }} 
+        />
+      )}
+         {showPinCreator && (
+        <PinCreatorModal 
+          onClose={() => setShowPinCreator(false)} 
+          onSave={(dataUrl) => {
+            setCustomPins([...customPins, dataUrl]);
+            setSelectedPinSrc(dataUrl);
+            setShowPinCreator(false);
+          }}
+        />
+      )}
+          {tool === 'pin' && (
+        <div style={{ position: 'absolute', top: '70px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '8px', zIndex: 10, background: '#1e1e24', padding: '8px', borderRadius: '8px', border: '1px solid #333' }}>
+          {customPins.length === 0 && <span style={{ color: '#aaa', fontSize: '14px', alignSelf: 'center' }}>No pins created</span>}
+          {customPins.map((src, i) => (
+            <img key={i} src={src} alt="pin" style={{ width: '32px', height: '32px', border: selectedPinSrc === src ? '2px solid #3b82f6' : '1px solid transparent', cursor: 'pointer', borderRadius: '4px', background: 'white' }} onClick={() => setSelectedPinSrc(src)} />
+          ))}
+          <button onClick={() => setShowPinCreator(true)} style={{ background: '#3b82f6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', padding: '0 8px', fontSize: '12px' }}>+ Create New</button>
+        </div>
+      )}
     <Stage
         ref={stageRef}
         className='drawing-canvas'
@@ -133,6 +164,20 @@ return(
               lineCap="round"
                globalCompositeOperation={line.tool === 'eraser' ? 'destination-out' : 'source-over'}        
               lineJoin="round"
+            />
+          ))}
+          {pins.map((pin) => (
+            <URLImage 
+              key={pin.id} 
+              pin={pin} 
+              isSelected={selectedPlacedPin === pin.id}
+              onClick={() => setSelectedPlacedPin(pin.id)}
+              onDelete={() => yPinsRef.current?.delete(pin.id)}
+              onDragEnd={(e) => {
+                if (yPinsRef.current) {
+                  yPinsRef.current.set(pin.id, { ...pin, x: e.target.x(), y: e.target.y() });
+                }
+              }} 
             />
           ))}
               </Layer>

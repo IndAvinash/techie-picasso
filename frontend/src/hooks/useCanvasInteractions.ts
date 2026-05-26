@@ -6,6 +6,8 @@ export function useCanvasInteractions(
   color: string,
    docRef: React.MutableRefObject<Y.Doc | null>,
   yLinesRef: React.MutableRefObject<Y.Array<LineType> | null>,
+    yPinsRef: React.MutableRefObject<Y.Map<any> | null>,
+  selectedPinSrc?: string | undefined,
 ) {
      const [stageScale, setStageScale] = useState(1);
     const [stagePos, setStagePos] = useState({ x: 0, y: 0 });
@@ -52,7 +54,16 @@ export function useCanvasInteractions(
     
     const stage = e.target.getStage();
     const pos = getRelativePointerPosition(stage);
-
+if (tool === 'pin' && selectedPinSrc && yPinsRef.current) {
+      const pinId = Date.now().toString() + Math.random().toString(36).substr(2, 5);
+      yPinsRef.current.set(pinId, {
+        id: pinId,
+        src: selectedPinSrc,
+        x: pos.x,
+        y: pos.y
+      });
+      return;
+    }
 
     if (!isDrawing.current || !yLinesRef.current) return;
     

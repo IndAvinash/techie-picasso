@@ -19,8 +19,10 @@ export function useYJsRoom(roomId: string| undefined) {
     const [provider, setProvider] = useState<WebsocketProvider | null>(null);
     const providerRef = useRef<WebsocketProvider | null>(null);
     const docRef = useRef<Y.Doc | null>(null);
-    const YLinesRef = useRef<Y.Array<LineType> | null>(null);
-    
+    const yLinesRef = useRef<Y.Array<LineType> | null>(null);
+     const [ownerLeft, setOwnerLeft] = useState(false);
+  const [pins, setPins] = useState<any[]>([]);
+  const yPinsRef = useRef<Y.Map<any> | null>(null);
     
     useEffect(() => {
 
@@ -40,10 +42,13 @@ export function useYJsRoom(roomId: string| undefined) {
 
     const doc = new Y.Doc();
     const yLines = doc.getArray<LineType>('lines');
-    YLinesRef.current = yLines;
-    docRef.current = doc;
+    const yPins = doc.getMap<any>('pins');
+    
     yLines.observe(() => {
       if (isMounted) setLines(yLines.toArray());
+    });
+    yPins.observe(() => {
+      if (isMounted) setPins(Array.from(yPins.values()));
     });
     if(roomId){
         const provider = new WebsocketProvider('ws://localhost:3000', roomId?roomId:'', doc);
@@ -122,13 +127,31 @@ export function useYJsRoom(roomId: string| undefined) {
     }else {
         if (isMounted) setParticipants([]);
     }
+      docRef.current = doc;
+    yLinesRef.current = yLines;
+    yPinsRef.current = yPins;
     return () => {
         isMounted = false;
       provider?.disconnect();
       doc.destroy();
     };
   }, [roomId,navigate]);
-
+useEffect(() => {
+    if (roomId && roomOwnerId && participants.length > 0) {
+      const ownerPresent = participants.find(p => p.user.id === roomOwnerId);
+      
+      if (!ownerPresent) {
+        const timerId = setTimeout(() => {
+          setOwnerLeft(true);
+          closeRoom();
+        }, 5 * 60 * 1000);
+        
+        return () => clearTimeout(timerId);
+      } else {
+        setOwnerLeft(false);
+      }
+    }
+  }, [participants, roomOwnerId, roomId]);
   const kickUser = (userId: string) => {
     if (docRef.current) {
       docRef.current.getMap('kicked').set(userId, true);
@@ -145,5 +168,17 @@ const closeRoom = () => {
   };
 
 
-  return { lines, participants, roomOwnerId, docRef, YLinesRef,kickUser ,closeRoom };
+   return {
+    lines,
+    pins,
+    participants,
+    roomOwnerId,
+    ownerLeft,
+    setOwnerLeft,
+    docRef,
+    yLinesRef,
+    yPinsRef,
+    kickUser,
+    closeRoom
+  };
 }
