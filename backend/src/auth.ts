@@ -120,9 +120,9 @@ router.post('/auth', (req: any, res: any) => {
     const token = authHeader.split(' ')[1];
     try {
       const decoded: any = jwt.verify(token, JWT_SECRET);
-      if(decoded.email.startsWith('anon-') && decoded.email.endsWith('@temp.local')) {
-        return res.status(401).json({ error: 'Anonymous users are not authorized' });
-      }
+    //   if(decoded.email.startsWith('anon-') && decoded.email.endsWith('@temp.local')) {
+    //     return res.status(401).json({ error: 'Anonymous users are not authorized' });
+    //   }
       res.json({ user: { id: decoded.id, email: decoded.email } });
     } catch (e) {
       console.error("Invalid token on auth check");
