@@ -30,6 +30,7 @@ cool features I added
 - custom image pins: you can upload an image, it turns into a data url, and syncs across everyone's screen instantly. you can drag them around.
 
 - the duplicate tab glitch: if someone opened the room in two tabs, it would glitch. I used Yjs awareness to track when a user joined, and if they join again from a new tab, it boots their old tab automatically.
+yt overview - https://youtu.be/BpF0SgLkJk8
 
 docs I used
 if you want to look at the docs I used, here they are:
