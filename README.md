@@ -66,7 +66,7 @@ The frontend is a React application built with Vite and `react-konva`.
 
 ## How the Architecture Works
 - **Frontend (`localhost:5173`)**: Uses `react-konva` for drawing and `yjs` / `y-websocket` to sync real-time changes to the server.
-- **Nginx (`localhost:8080`)**: Acts as a load balancer, taking incoming WebSocket connections from the frontend and distributing them evenly between your backend servers (`4001` and `4002`).
+- **Nginx (`localhost:3000`)**: Acts as a load balancer, taking incoming WebSocket connections from the frontend and distributing them evenly between your backend servers (`4001` and `4002`).
 - **Backend (`localhost:4001`, `localhost:4002`)**: Node.js servers that handle the WebSocket connections. If User A connects to `4001` and User B connects to `4002`, the servers use **Redis Pub/Sub** to instantly forward drawing updates to each other.
 - **PostgreSQL**: Every 2 seconds after drawing stops (debouncing), the backend takes a snapshot of the Yjs document state and saves it to Postgres so the room persists even if the servers restart.
 
