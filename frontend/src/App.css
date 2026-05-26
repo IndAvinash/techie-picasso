@@ -145,6 +145,22 @@ input::placeholder{
   background-color: #e7f5ff;
   color: #1c7ed6; 
 }
+.toolbar input[type="color"] {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+}
+input[type="color"]::-webkit-color-swatch {
+    border-radius: 50%;        /* inner circle [InlineCitation-1-HTML Color Input: How to Use and Style <input type="color">](https://rebeccamdeprey.com/blog/styling-the-html-color-input) */
+    border: none;
+}
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;                /* control spacing [InlineCitation-1-HTML Color Input: How to Use and Style <input type="color">](https://rebeccamdeprey.com/blog/styling-the-html-color-input) */
+}
 .tool-btn::after {
   content: attr(data-tooltip);
   position: absolute;
@@ -269,4 +285,18 @@ list-style: none;
 }
 .drawing-canvas{
   border: solid 2px black;
+}
+
+/* Room Menu */
+.RoomMenu{
+      position: 'absolute';
+       top: '120%';
+        right: 0; 
+        background: '#1e1e24';
+         border: '1px solid #333'; 
+      border-radius: '8px'; padding: '12px'; 
+      min-width: '220px'; 
+      z-index: 1000; 
+      box-shadow: '0 4px 12px rgba(0,0,0,0.5)'
+   
 }

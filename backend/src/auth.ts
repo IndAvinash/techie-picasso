@@ -12,7 +12,6 @@ const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'secret123';
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
-
 router.post('/signup', async (req: any, res: any) => {
   try {
     const { email, password } = req.body;
@@ -121,6 +120,9 @@ router.post('/auth', (req: any, res: any) => {
     const token = authHeader.split(' ')[1];
     try {
       const decoded: any = jwt.verify(token, JWT_SECRET);
+      if(decoded.email.startsWith('anon-') && decoded.email.endsWith('@temp.local')) {
+        return res.status(401).json({ error: 'Anonymous users are not authorized' });
+      }
       res.json({ user: { id: decoded.id, email: decoded.email } });
     } catch (e) {
       console.error("Invalid token on auth check");

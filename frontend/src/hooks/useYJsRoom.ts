@@ -56,6 +56,15 @@ export function useYJsRoom(roomId: string| undefined) {
           console.log('WebSocket connected successfully.');
         }
       });
+      
+       const kickedMap = doc.getMap('kicked');
+      kickedMap.observe(() => {
+        const user = getCurrentUser();
+        if (user && kickedMap.get(user.id)) {
+          alert('You have been kicked by the room owner.');
+          navigate('/');
+        }
+      });
       const syncParticipants = () => {
         if (!provider) return;
         const states = Array.from(provider.awareness.getStates().entries());
@@ -119,6 +128,13 @@ export function useYJsRoom(roomId: string| undefined) {
       doc.destroy();
     };
   }, [roomId,navigate]);
+
+  const kickUser = (userId: string) => {
+    if (docRef.current) {
+      docRef.current.getMap('kicked').set(userId, true);
+    }
+  };
+
 const closeRoom = () => {
     
     axios.post(`${API_URL}/rooms/${roomId}/close`, {}, {
@@ -128,5 +144,6 @@ const closeRoom = () => {
     });
   };
 
-  return { lines, participants, roomOwnerId, docRef, YLinesRef, closeRoom };
+
+  return { lines, participants, roomOwnerId, docRef, YLinesRef,kickUser ,closeRoom };
 }

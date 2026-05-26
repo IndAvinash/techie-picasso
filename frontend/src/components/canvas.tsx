@@ -21,7 +21,7 @@ export default function Canvas(){
     const stageRef = useRef<any>(null)
    
 
-  const { lines, participants, roomOwnerId, docRef, YLinesRef , closeRoom} = useYJsRoom(roomId);
+  const { lines, participants, roomOwnerId, docRef, YLinesRef , kickUser,closeRoom} = useYJsRoom(roomId);
 
   const {
     stageScale, stagePos,
@@ -76,6 +76,7 @@ return(
         </div>
         <nav className="header-center">
             <div className="toolbar">
+                <input type="color" value={color} onChange={(e)=>setColor(e.target.value)} className="color-picker" title="Choose Color"/>
                 <button className={`tool-btn ${tool === 'hand' ? 'active' : ''}`} data-tooltip="span" onClick={()=>{setTool('hand')}} ><Hand/></button>
                 <button className={`tool-btn ${tool === 'pen' ? 'active' : ''}`} data-tooltip="draw" onClick={()=>{setTool('pen')}}><Pen/></button>
                 <button className={`tool-btn ${tool === 'eraser' ? 'active' : ''}`} data-tooltip="erase" onClick={()=>{setTool('eraser')}}><Eraser/></button>
@@ -100,6 +101,7 @@ return(
               createRoom={createRoom} 
               closeRoom={closeRoom}
               navigate={navigate}
+              kickUser={kickUser}
               setShowMenu={()=>setShowMenu(false)}
             />
           )}
